@@ -1,16 +1,16 @@
-// random_generator.h
+// utils.h
 #ifndef UTILS_H
 #define UTILS_H
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 
-float getRandom(int longueur) {
+float getRandom(int circuitLength) {
     int vmax = 64;
     int vmin = 44;
 
-    float tmax = ((longueur * 1000.0) / vmin) * 1000.0;
-    float tmin = ((longueur * 1000.0) / vmax) * 1000.0;
+    float tmax = ((circuitLength * 1000.0) / vmin) * 1000.0;
+    float tmin = ((circuitLength * 1000.0) / vmax) * 1000.0;
 
     // Initialisation of the seed
     srand(time(NULL));
