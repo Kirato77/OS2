@@ -29,7 +29,14 @@ int main() {
             printf("2. Mode Special\n");
             printf("3. Exit\n");
             printf("Votre choix : ");
-            scanf("%d", &choice);
+
+            // Lire le choix et vérifier s'il est valide
+            while (scanf("%d", &choice) != 1 || (choice < 1 || choice > 3)) {
+                printf("Choix invalide. Veuillez choisir à nouveau : ");
+
+                // Vider le tampon d'entrée
+                while (getchar() != '\n');
+            }
 
             switch (choice) {
                 case 1:
@@ -44,11 +51,13 @@ int main() {
                 default:
                     printf("Choix invalide. Veuillez choisir à nouveau.\n");
             }
-        } else if (response != 'N' && response != 'n') {
-            printf("Réponse invalide. Veuillez répondre avec O/N.\n");
-        } else {
+        } else if (response == 'N' || response == 'n') {
             // Sortir de la boucle infinie si la réponse est 'N' ou 'n'
             break;
+        } else {
+            printf("Réponse invalide. Veuillez répondre avec O/N.\n");
+            // Vider le tampon d'entrée
+            while (getchar() != '\n');
         }
     }
 
