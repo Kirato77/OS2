@@ -1,18 +1,26 @@
+// random_generator.h
+#ifndef UTILS_H
+#define UTILS_H
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 
-max = 25
-min = 5
+int getRandom(int min, int max) {
 
-int main() {
     // Initialisation of the seed
     srand(time(NULL));
 
+    // Generate random number between 0 and RAND_MAX
+    int randomNumber = rand();
+
     // Division between max and min
-    int nombreDansUnePlage = nombreAleatoire % (max - min + 1) + min;
+    int number = randomNumber % (max - min + 1) + min;
 
-    printf("Nombre aléatoire : %d\n", nombreDansUnePlage);
-
-    return 0;
+    return number;
 }
+
+
+
+
+
+#endif
