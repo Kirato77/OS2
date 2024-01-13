@@ -51,3 +51,6 @@ CMakeLists.txt.user*
 # Dependency directories
 bin/
 lib/
+
+#test file
+test.c
