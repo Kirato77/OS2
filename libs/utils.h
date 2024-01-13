@@ -33,7 +33,7 @@ float getRandom(int circuitLength) {
 
 
 void getPilots() {
-    FILE *file = fopen("data/Liste des pilotes.csv", "r");
+    FILE *file = fopen("data/pilots.csv", "r");
 
     if (file == NULL) {
         perror("Erreur lors de l'ouverture du fichier");
@@ -79,5 +79,17 @@ void getPilots() {
     iconv_close(conversion);
     fclose(file);
 }
+
+int nbToursP(int longueur){
+    int temps = 0;
+    int x = 0;
+        while (temps < 3600){
+        int n = 3*getRandom(longueur);
+        temps += n;
+        x += 1;
+        }
+    return x;
+}
+
 
 #endif
