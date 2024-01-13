@@ -5,13 +5,12 @@
 #include <stdlib.h>
 #include <time.h>
 
-int getRandom(int longueur) {
-
+float getRandom(int longueur) {
     int vmax = 64;
     int vmin = 44;
 
-    int tmax = (longueur*1000)/vmin;
-    int tmin = (longueur*1000)/vmax;
+    float tmax = ((longueur * 1000.0) / vmin) * 1000.0;
+    float tmin = ((longueur * 1000.0) / vmax) * 1000.0;
 
     // Initialisation of the seed
     srand(time(NULL));
@@ -19,12 +18,12 @@ int getRandom(int longueur) {
     // Generate random number between 0 and RAND_MAX
     int randomNumber = rand();
 
-    // Division between max and min
-    int number = randomNumber % (tmax - tmin + 1) + tmin;
+    // Division between max and min with decimals
+    int number = randomNumber % (int)(tmax - tmin + 1) + (int)tmin;
+    float result = (float)number / 3000;
 
-    return number;
+    return result;
 }
-
 
 
 
