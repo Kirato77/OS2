@@ -4,6 +4,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <string.h>
+#include <iconv.h>
+
+#define MAX_LINE_SIZE 1024
+#define MAX_FIELD_SIZE 256
 
 float getRandom(int circuitLength) {
     int vmax = 64;
@@ -25,13 +30,7 @@ float getRandom(int circuitLength) {
     return result;
 }
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <iconv.h>
 
-#define MAX_LINE_SIZE 1024
-#define MAX_FIELD_SIZE 256
 
 void getPilots() {
     FILE *file = fopen("data/Liste des pilotes.csv", "r");
@@ -69,7 +68,7 @@ void getPilots() {
             }
 
             *output_ptr = '\0';  // Assurez-vous que la chaîne de sortie est terminée correctement
-            printf("%s\t", output);
+            printf("%-15s", output); // Ajustez la largeur du champ ici (20 caractères dans cet exemple)
 
             token = strtok(NULL, ",");
         }
@@ -80,6 +79,5 @@ void getPilots() {
     iconv_close(conversion);
     fclose(file);
 }
-
 
 #endif
