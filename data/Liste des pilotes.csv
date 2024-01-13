@@ -1,0 +1,21 @@
+nb,Num,Prénom,Nom,Team,Naissance,Nationalité
+1,1,Max,Verstappen,Red Bull,30/09/1997,Pays-Bas
+2,2,Logan,Sargeant,Williams,31/12/2000,États-Unis
+3,3,Daniel,Ricciardo,AlphaTauri,01/07/1989,Australie
+4,4,Lando,Norris,McLaren,13/11/1999,Royaume-Uni
+5,10,Pierre,Gasly,Alpine,07/02/1996,France
+6,11,Sergio,Pérez,Red Bull,26/01/1990,Mexique
+7,14,Fernando,Alonso,Aston Martin,29/07/1981,Espagne
+8,16,Charles,Leclerc,Ferrari,16/10/1997,Monaco
+9,18,Lance,Stroll,Aston Martin,29/10/1998,Canada
+10,20,Kevin,Magnussen,Haas,05/10/1992,Danemark
+11,22,Yuki,Tsunoda,AlphaTauri,11/05/2000,Japon
+12,23,Alexander,Albon,Williams,23/03/1996,Thaïlande
+13,24,Guanyu,Zhou,Alfa Romeo,30/05/1999,Chine
+14,27,Nico,Hülkenberg,Haas,19/08/1987,Allemagne
+15,31,Esteban,Ocon,Alpine,17/09/1996,France
+16,44,Lewis,Hamilton,Mercedes,07/01/1985,Royaume-Uni
+17,55,Carlos,Sainz Jr,Ferrari,01/09/1994,Espagne
+18,63,George,Russell,Mercedes,15/02/1998,Royaume-Uni
+19,77,Valtteri,Bottas,Alfa Romeo,28/08/1989,Finlande
+20,81,Oscar,Piastri,McLaren,06/04/2001,Australie
