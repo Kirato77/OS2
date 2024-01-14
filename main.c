@@ -24,7 +24,7 @@ int main() {
     sortScoreTable(scoreTable);
 
     // Afficher le tableau des scores
-    printf("Dernier circuit : %d\n", scoreTable->lastCircuit);
+    printf("Dernier circuit : %d\n", scoreTable->lastTrack);
     printf("Tableau des scores :\n");
     for (int i = 0; i < scoreTable->numScores; ++i) {
         printf("Pilote %d : %d points\n", scoreTable->scores[i].pilotNumber, scoreTable->scores[i].points);
@@ -33,7 +33,7 @@ int main() {
     // Libérer la mémoire allouée
     freeScoreTable(scoreTable);
 
-
+    /// Menu
     while (1) {
         // Ask the user if they want to start the next weekend
         printf("Voulez-vous lancer le prochain week-end ? (O/N): ");

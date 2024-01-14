@@ -18,11 +18,11 @@ struct Pilot {
 };
 
 // Fonction pour lire un file CSV et renvoyer un tableau de structures
-int readCSVFile(const char *Namefile, struct Pilot pilots[], int *rowIndex) {
+int readPilotsCSVFile(const char *Namefile, struct Pilot pilots[], int *rowIndex) {
     FILE *file = fopen(Namefile, "r");
 
     if (file == NULL) {
-        perror("Erreur lors de l'ouverture du file");
+        perror("Erreur lors de l'ouverture du fichier");
         return 1;
     }
 
@@ -78,6 +78,51 @@ int readCSVFile(const char *Namefile, struct Pilot pilots[], int *rowIndex) {
     return 0;
 }
 
-/// CIRCUITS.CSV
+/// TRACKS.CSV
+#define MAX_ROWS 25
+
+struct Track {
+    char Num[50];
+    char City[50];
+    char DATE[10];
+    char Country[50];
+    char Name[50];
+    float Size;
+    char Race[50];
+    char TrackName[50];
+    char Date[10];
+};
+
+int readTracksCSVFile(const char *filename, struct Track tracks[]) {
+    FILE *file = fopen(filename, "r");
+    if (file == NULL) {
+        perror("Erreur lors de l'ouverture du fichier");
+        return -1;
+    }
+
+    char row[1024];
+    int i = 0;
+
+    // Ignorer la première ligne (headers)
+    fgets(row, sizeof(row), file);
+
+    while (fgets(row, sizeof(row), file) != NULL) {
+        // Utiliser sscanf pour extraire les valeurs de la ligne
+        sscanf(row, "%49[^;];%49[^;];%9[^;];%49[^;];%49[^;];%f;%49[^;];%49[^;];%9[^;]",
+               tracks[i].Num, tracks[i].City, tracks[i].DATE, tracks[i].Country,
+               tracks[i].Name, &tracks[i].Size, tracks[i].Race, tracks[i].TrackName,
+               tracks[i].Date);
+
+        i++;
+
+        if (i >= MAX_ROWS) {
+            break;  // Limiter le nombre de lignes lues pour éviter le dépassement de tableau
+        }
+    }
+
+    fclose(file);
+
+    return i;  // Retourne le le nombre de lignes lues
+}
 
 #endif

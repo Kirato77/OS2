@@ -15,7 +15,7 @@ typedef struct {
 
 // Structure pour représenter le tableau des scores
 typedef struct {
-    int lastCircuit;
+    int lastTrack;
     PilotScore *scores;
     int numScores;
 } ScoreTable;
@@ -45,8 +45,8 @@ void initializeScoresFromCSV(ScoreTable *scoreTable, const char *filename) {
     struct Pilot pilots[100];
     int rowIndex = 0;
 
-    if (readCSVFile(filename, pilots, &rowIndex) != 0) {
-        fprintf(stderr, "Erreur lors de la lecture du file CSV.\n");
+    if (readPilotsCSVFile(filename, pilots, &rowIndex) != 0) {
+        fprintf(stderr, "Erreur lors de la lecture du fichier CSV.\n");
         exit(EXIT_FAILURE);
     }
 
@@ -65,7 +65,7 @@ void initializeScoresFromCSV(ScoreTable *scoreTable, const char *filename) {
 
 void writeScoresToJSON(ScoreTable *scoreTable, const char *filename) {
     cJSON *jsonRoot = cJSON_CreateObject();
-    cJSON_AddNumberToObject(jsonRoot, "last_circuit", scoreTable->lastCircuit);
+    cJSON_AddNumberToObject(jsonRoot, "last_circuit", scoreTable->lastTrack);
 
     cJSON *jsonScores = cJSON_CreateArray();
     for (int i = 0; i < scoreTable->numScores; ++i) {
@@ -101,7 +101,7 @@ int isScoresEmpty(cJSON *jsonScores) {
 ScoreTable *getScoreTable(const char *jsonfile, const char *csvfile) {
     FILE *file = fopen(jsonfile, "r");
     if (!file) {
-        fprintf(stderr, "Erreur lors de l'ouverture du file %s\n", jsonfile);
+        fprintf(stderr, "Erreur lors de l'ouverture du fichier %s\n", jsonfile);
         exit(EXIT_FAILURE);
     }
 
@@ -119,14 +119,14 @@ ScoreTable *getScoreTable(const char *jsonfile, const char *csvfile) {
     free(jsonData);
 
     if (!jsonRoot) {
-        fprintf(stderr, "Erreur lors de l'analyse du file JSON.\n");
+        fprintf(stderr, "Erreur lors de l'analyse du fichier JSON.\n");
         exit(EXIT_FAILURE);
     }
 
     cJSON *jsonScores = cJSON_GetObjectItemCaseSensitive(jsonRoot, "scores");
 
     ScoreTable *scoreTable = (ScoreTable *)malloc(sizeof(ScoreTable));
-    scoreTable->lastCircuit = cJSON_GetObjectItemCaseSensitive(jsonRoot, "last_circuit")->valueint;
+    scoreTable->lastTrack = cJSON_GetObjectItemCaseSensitive(jsonRoot, "last_track")->valueint;
 
     if (isScoresEmpty(jsonScores)) {
         // If scores array is empty, initialize from CSV
