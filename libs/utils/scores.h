@@ -65,7 +65,7 @@ void initializeScoresFromCSV(ScoreTable *scoreTable, const char *filename) {
 
 void writeScoresToJSON(ScoreTable *scoreTable, const char *filename) {
     cJSON *jsonRoot = cJSON_CreateObject();
-    cJSON_AddNumberToObject(jsonRoot, "last_circuit", scoreTable->lastTrack);
+    cJSON_AddNumberToObject(jsonRoot, "last_track", scoreTable->lastTrack);
 
     cJSON *jsonScores = cJSON_CreateArray();
     for (int i = 0; i < scoreTable->numScores; ++i) {
