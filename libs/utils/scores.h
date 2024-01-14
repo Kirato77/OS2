@@ -54,7 +54,7 @@ void initializeScoresFromCSV(ScoreTable *scoreTable, const char *filename) {
     if (scoreTable->numScores == 0) {
         // Initialize scores from the CSV data
         scoreTable->numScores = rowIndex;
-        scoreTable->scores = (PilotScore *)malloc(sizeof(PilotScore) * scoreTable->numScores);
+        scoreTable->scores = (PilotScore *) malloc(sizeof(PilotScore) * scoreTable->numScores);
 
         for (int i = 0; i < rowIndex; ++i) {
             scoreTable->scores[i].pilotNumber = pilots[i].Num;
@@ -109,7 +109,7 @@ ScoreTable *getScoreTable(const char *jsonfile, const char *csvfile) {
     long fileSize = ftell(file);
     fseek(file, 0, SEEK_SET);
 
-    char *jsonData = (char *)malloc(fileSize + 1);
+    char *jsonData = (char *) malloc(fileSize + 1);
     fread(jsonData, 1, fileSize, file);
     fclose(file);
 
@@ -125,7 +125,7 @@ ScoreTable *getScoreTable(const char *jsonfile, const char *csvfile) {
 
     cJSON *jsonScores = cJSON_GetObjectItemCaseSensitive(jsonRoot, "scores");
 
-    ScoreTable *scoreTable = (ScoreTable *)malloc(sizeof(ScoreTable));
+    ScoreTable *scoreTable = (ScoreTable *) malloc(sizeof(ScoreTable));
     scoreTable->lastTrack = cJSON_GetObjectItemCaseSensitive(jsonRoot, "last_track")->valueint;
 
     if (isScoresEmpty(jsonScores)) {
@@ -141,7 +141,7 @@ ScoreTable *getScoreTable(const char *jsonfile, const char *csvfile) {
     } else {
         // Otherwise, read scores from JSON
         scoreTable->numScores = cJSON_GetArraySize(jsonScores);
-        scoreTable->scores = (PilotScore *)malloc(sizeof(PilotScore) * scoreTable->numScores);
+        scoreTable->scores = (PilotScore *) malloc(sizeof(PilotScore) * scoreTable->numScores);
 
         for (int i = 0; i < scoreTable->numScores; ++i) {
             cJSON *jsonScore = cJSON_GetArrayItem(jsonScores, i);
