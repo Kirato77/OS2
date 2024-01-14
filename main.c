@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <stdlib.h>
+#include "libs/utils/scores.h"
 
 // Function to simulate a normal weekend
 void simulateNormalWeekend() {
@@ -16,6 +16,23 @@ void simulateSpecialWeekend() {
 int main() {
     int choice;
     char response;
+
+    /// Print scores
+    ScoreTable *scoreTable = getScoreTable("./data/data.json", "./data/pilots.csv");
+
+    // Trier le tableau des scores
+    sortScoreTable(scoreTable);
+
+    // Afficher le tableau des scores
+    printf("Dernier circuit : %d\n", scoreTable->lastCircuit);
+    printf("Tableau des scores :\n");
+    for (int i = 0; i < scoreTable->numScores; ++i) {
+        printf("Pilote %d : %d points\n", scoreTable->scores[i].pilotNumber, scoreTable->scores[i].points);
+    }
+
+    // Libérer la mémoire allouée
+    freeScoreTable(scoreTable);
+
 
     while (1) {
         // Ask the user if they want to start the next weekend
