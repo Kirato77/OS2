@@ -18,8 +18,8 @@ struct Pilot {
 };
 
 // Fonction pour lire un file CSV et renvoyer un tableau de structures
-int readPilotsCSVFile(const char *Namefile, struct Pilot pilots[], int *rowIndex) {
-    FILE *file = fopen(Namefile, "r");
+int readPilotsCSVFile(const char *filename, struct Pilot pilots[], int *rowIndex) {
+    FILE *file = fopen(filename, "r");
 
     if (file == NULL) {
         perror("Erreur lors de l'ouverture du fichier");

@@ -4,6 +4,8 @@
 # Compiled files
 test
 main
+Test
+Main
 *.o
 *.out
 *.exe
@@ -54,5 +56,5 @@ CMakeLists.txt.user*
 bin/
 lib/
 
-#test file
+# Test file
 test.c

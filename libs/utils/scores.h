@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "customCSV.h"
-#include "../cjson/cJSON.h"
+#include "../cJSON/cJSON.h"
 
 // Structure pour représenter un score d'un pilote
 typedef struct {
