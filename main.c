@@ -4,13 +4,11 @@
 // Function to simulate a normal weekend
 void simulateNormalWeekend() {
     printf("Simulation du week-end en mode normal...\n");
-    // Add your simulation logic here
 }
 
 // Function to simulate a special weekend
 void simulateSpecialWeekend() {
     printf("Simulation du week-end en mode spécial...\n");
-    // Add your special simulation logic here
 }
 
 int main() {
