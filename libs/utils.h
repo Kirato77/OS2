@@ -19,8 +19,6 @@ float getRandomTime(int trackLength) {
     float tmax = ((trackLength * 1000.0) / vmin) * 1000.0;
     float tmin = ((trackLength * 1000.0) / vmax) * 1000.0;
 
-    srand(time(NULL));
-
     // Generate random number between 0 and RAND_MAX
     int randomNumber = rand();
 
@@ -119,7 +117,7 @@ void saveResults(int index, SharedMemory *sharedMemory) {
 
     // Écriture des données dans le fichier
     for (int i = 0; i < NUM_PILOTS; ++i) {
-        fprintf(file, "%d,%.2f,%.2f,%.2f,%.2f,%.2f\n",
+        fprintf(file, "%s,%.2f,%.2f,%.2f,%.2f,%.2f\n",
                 sharedMemory->pilots[i].Name,
                 sharedMemory->pilots[i].sectorTimes[0],
                 sharedMemory->pilots[i].sectorTimes[1],

@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include "libs/sessions/sessions.h"
 #include "libs/utils/scores.h"
-#include <time.h>
 
 
 void clearBuffer() {

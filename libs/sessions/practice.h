@@ -53,9 +53,8 @@ void simulateFreePractice(SharedMemory *sharedMemory) {
             exit(EXIT_FAILURE);
         }
         if (pid == 0) {
-            srand(time(NULL) ^ (getpid()<<16));
             // Code exécuté par le processus fils
-
+            srand(time(NULL) ^ getpid());
             for (int tour = 1; tour <= nbToursP(5); ++tour) {
                 // Générer trois temps aléatoires et mettre à jour la SharedMemory
                 for (int j = 0; j < 3; ++j) {
