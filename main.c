@@ -11,6 +11,7 @@ void clearBuffer() {
 
 // Function to simulate a normal weekend
 void simulateNormalWeekend() {
+    SharedMemory sharedMemory;
     printf("Simulation du week-end en mode normal...\n");
 
     // Liste des sessions
@@ -24,7 +25,7 @@ void simulateNormalWeekend() {
 
         // Appeler la session correspondante
         if (i == 0) {
-            simulateFreePractice();
+            simulateFreePractice(&sharedMemory);
         } else if (i == 1) {
             simulateQualification();
         } else if (i == 2) {
@@ -105,9 +106,6 @@ void menu() {
 }
 
 int main() {
-    // Initialisation of the seed
-    srand(time(NULL));
-
     printScores();
     menu();
 
