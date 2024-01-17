@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "libs/sessions/sessions.h"
 #include "libs/utils/scores.h"
+#include <time.h>
 
 
 void clearBuffer() {
@@ -13,7 +14,7 @@ void simulateNormalWeekend() {
     printf("Simulation du week-end en mode normal...\n");
 
     // Liste des sessions
-    char *sessions[] = {"Essai libre", "Qualification", "Course"};
+    char *sessions[] = {"Essais libres", "Qualifications", "Course"};
     int numSessions = sizeof(sessions) / sizeof(sessions[0]);
 
     // Boucle pour chaque session
@@ -104,6 +105,8 @@ void menu() {
 }
 
 int main() {
+    // Initialisation of the seed
+    srand(time(NULL));
 
     printScores();
     menu();

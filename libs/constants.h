@@ -2,6 +2,8 @@
 #ifndef CONSTANTS_H
 #define CONSTANTE_H
 
+#include <semaphore.h>
+
 #define DATA_JSON_PATH "../data/data.json"
 #define PILOTS_CSV_PATH "../data/pilots.csv"
 #define TRACKS_CSV_PATH "../data/tracks.csv"

@@ -6,10 +6,10 @@
 #include <unistd.h>
 
 void simulateFreePractice() {
-    printf("Simulation des Qualifications en cours...\n");
+    printf("Simulation des Essais Libres en cours...\n");
     // logique
     sleep(5);  // Simulation d'une session de 5 secondes
-    printf("Fin des Qualifications.\n");
+    printf("Fin des Essais Libres.\n");
 }
 
 #endif

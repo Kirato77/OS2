@@ -7,6 +7,8 @@
 #include <time.h>
 #include <float.h>
 
+#include "utils/customCSV.h"
+
 #define MAX_LINE_LENGTH 256
 #define MAX_FIELDS 20
 
@@ -16,9 +18,6 @@ float getRandomTime(int trackLength) {
 
     float tmax = ((trackLength * 1000.0) / vmin) * 1000.0;
     float tmin = ((trackLength * 1000.0) / vmax) * 1000.0;
-
-    // Initialisation of the seed
-    srand(time(NULL));
 
     // Generate random number between 0 and RAND_MAX
     int randomNumber = rand();
@@ -41,22 +40,29 @@ int nbToursP(int trackLength) {
     return x;
 }
 
-#define NUM_PILOTS 10
-#define NUM_SECTORS 4
-// Structure pour stocker les informations d'un pilote
-typedef struct {
-    int number;
-    float sectorTimes[NUM_SECTORS];
-    float bestLapTime;
-    float totalTime;
-    int stand;
-    int out;
-} PilotStats;
+#define NUM_PILOTS 20
+#define NUM_SECTORS 3
 
 // Structure pour la mémoire partagée
 typedef struct {
-    PilotStats pilots_stats[NUM_PILOTS];
+    struct Pilot pilots[20];
 } SharedMemory;
+
+// Fonction pour initialiser les valeurs des pilotes dans la structure SharedMemory
+void initializeSharedMemory(SharedMemory *sharedMemory) {
+    int rowIndex = 0;
+    readPilotsCSVFile("./data/pilots.csv", sharedMemory->pilots, &rowIndex);
+
+    for (int i = 0; i < 20; ++i) {
+        for (int j = 0; j < 3; ++j) {
+            sharedMemory->pilots[i].sectorTimes[j] = 0.0f;
+        }
+        sharedMemory->pilots[i].bestLapTime = 0.0f;
+        sharedMemory->pilots[i].totalTime = 0.0f;
+        sharedMemory->pilots[i].pit = 0;
+        sharedMemory->pilots[i].out = 0;
+    }
+}
 
 // Fonction pour afficher le tableau des résultats
 void displayResults(SharedMemory *sharedMemory) {
@@ -66,14 +72,14 @@ void displayResults(SharedMemory *sharedMemory) {
     printf("---------------------------------------------------------\n");
 
     for (int i = 0; i < NUM_PILOTS; ++i) {
-        printf("|   %2d   |", sharedMemory->pilots_stats[i].number);
+        printf("|   %s   |", sharedMemory->pilots[i].Name);
 
         for (int sector = 0; sector < NUM_SECTORS; ++sector) {
-            printf("   %.2f   |", sharedMemory->pilots_stats[i].sectorTimes[sector]);
+            printf("   %.2f   |", sharedMemory->pilots[i].sectorTimes[sector]);
         }
 
-        printf("   %.2f   |", sharedMemory->pilots_stats[i].bestLapTime);
-        printf("   %.2f   |\n", sharedMemory->pilots_stats[i].totalTime);
+        printf("   %.2f   |", sharedMemory->pilots[i].bestLapTime);
+        printf("   %.2f   |\n", sharedMemory->pilots[i].totalTime);
         printf("---------------------------------------------------------\n");
     }
 
@@ -84,14 +90,14 @@ void displayResults(SharedMemory *sharedMemory) {
         int bestPilotIndex = -1;
 
         for (int i = 0; i < NUM_PILOTS; ++i) {
-            if (sharedMemory->pilots_stats[i].sectorTimes[sector] < bestSectorTime) {
-                bestSectorTime = sharedMemory->pilots_stats[i].sectorTimes[sector];
+            if (sharedMemory->pilots[i].sectorTimes[sector] < bestSectorTime) {
+                bestSectorTime = sharedMemory->pilots[i].sectorTimes[sector];
                 bestPilotIndex = i;
             }
         }
 
-        printf("Meilleur temps Secteur %d : Pilote %d avec %.2f secondes\n", sector + 1,
-               sharedMemory->pilots_stats[bestPilotIndex].number, bestSectorTime);
+        printf("Meilleur temps Secteur %d : Pilote %s avec %.2f secondes\n", sector + 1,
+               sharedMemory->pilots[bestPilotIndex].Name, bestSectorTime);
     }
 }
 
@@ -112,63 +118,15 @@ void saveResults(int index, SharedMemory *sharedMemory) {
     // Écriture des données dans le fichier
     for (int i = 0; i < NUM_PILOTS; ++i) {
         fprintf(file, "%d,%.2f,%.2f,%.2f,%.2f,%.2f\n",
-                sharedMemory->pilots_stats[i].number,
-                sharedMemory->pilots_stats[i].sectorTimes[0],
-                sharedMemory->pilots_stats[i].sectorTimes[1],
-                sharedMemory->pilots_stats[i].sectorTimes[2],
-                sharedMemory->pilots_stats[i].bestLapTime,
-                sharedMemory->pilots_stats[i].totalTime);
+                sharedMemory->pilots[i].Name,
+                sharedMemory->pilots[i].sectorTimes[0],
+                sharedMemory->pilots[i].sectorTimes[1],
+                sharedMemory->pilots[i].sectorTimes[2],
+                sharedMemory->pilots[i].bestLapTime,
+                sharedMemory->pilots[i].totalTime);
     }
 
     fclose(file);
-}
-
-void genererTempsAleatoires(int min, int max, float temps[4]) {
-
-
-    // Générer des temps aléatoires pour chaque secteur
-
-    temps[0] = rand() % (max - min + 1) + min;
-
-    temps[1] =  rand() % (max - min + 1) + min;
-    temps[2] = rand() % (max - min + 1) + min;
-
-    // Calculer le temps total du tour
-    temps[3] = temps[0] + temps[1] + temps[2]; // Tour
-}
-
-float *drive(){
-
-    //initialisation des meilleurs temps à 0
-    float *meilleursTemps = (float *)malloc(4 * sizeof(float));
-    for (int i = 0; i < 4; i++) {
-        meilleursTemps[i] = 0;
-    }
-
-    //génerére le temps de ce tour dans un tableau
-    float temps[4] = {0, 0, 0, 0};
-    genererTempsAleatoires(25000, 45000, temps);
-
-    //sauver les temps si ils sont meilleur que les précedents
-    if (meilleursTemps[0] == 0 || meilleursTemps[0] > temps[0]){
-        meilleursTemps[0] = temps[0];
-    }
-    if (meilleursTemps[1] == 0 || meilleursTemps[1] > temps[1]){
-        meilleursTemps[1] = temps[1];
-    }
-    if (meilleursTemps[2] == 0 || meilleursTemps[2] > temps[2]){
-        meilleursTemps[2] = temps[2];
-    }
-    if (meilleursTemps[3] == 0 || meilleursTemps[3] > temps[3]){
-        meilleursTemps[3] = temps[3];
-    }
-
-    return meilleursTemps;
-}
-
-int compNum(const void *a, const void *b);
-void sortpilots_statsByNum(struct PilotStats *resultat, int nombreDePilotes) {
-    qsort(resultat, nombreDePilotes, sizeof(struct PilotStats), compNum);
 }
 
 #endif

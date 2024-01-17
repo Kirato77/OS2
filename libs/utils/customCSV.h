@@ -15,6 +15,11 @@ struct Pilot {
     char Team[50];
     char Birthday[15];
     char Nationality[30];
+    float sectorTimes[3];
+    float bestLapTime;
+    float totalTime;
+    int pit;
+    int out;
 };
 
 // Fonction pour lire un file CSV et renvoyer un tableau de structures
