@@ -44,40 +44,81 @@ void simulateFreePractice(SharedMemory *sharedMemory) {
     // Nombre de pilotes
     int numPilots = sizeof(attachedMemory->pilots) / sizeof(attachedMemory->pilots[0]);
 
-    // Boucle pour créer un processus par voiture
-    for (int i = 0; i < numPilots; ++i) {
-        pid_t pid = fork();
+    for (int k = 1; k <= 3; k++) {
+        // Reinitialiser la mémoire partagée
+        initializeSharedMemory(attachedMemory);
 
-        if (pid == -1) {
-            perror("Erreur lors de la création du processus fils");
+        // Créer un processus fils pour afficher les résultats toutes les 5 secondes
+        pid_t pid_display = fork();
+        if (pid_display == -1) {
+            perror("Erreur lors de la création du processus fils pour l'affichage");
             exit(EXIT_FAILURE);
         }
-        if (pid == 0) {
-            // Code exécuté par le processus fils
-            srand(time(NULL) ^ getpid());
-            for (int tour = 1; tour <= nbToursP(5); ++tour) {
-                // Générer trois temps aléatoires et mettre à jour la SharedMemory
-                for (int j = 0; j < 3; ++j) {
-                    float randomTime = getRandomTime(5);
+        if (pid_display == 0) {
+            // Code exécuté par le processus fils pour l'affichage
+            while (1) {
+                // Effacer la console
+                system("clear"); // Utiliser la commande clear pour Linux ou macOS
+                // Afficher les résultats
+                displayResults(attachedMemory);
+                // Attendre 5 secondes
+                sleep(5); // Utiliser la fonction sleep pour ralentir le programme
+            }
+        }
 
-                    // Vérifier et mettre à jour la SharedMemory si nécessaire
-                    if (attachedMemory->pilots[i].sectorTimes[j] == 0 || randomTime < attachedMemory->pilots[i].sectorTimes[j]) {
-                        attachedMemory->pilots[i].sectorTimes[j] = randomTime;
+        // Boucle pour créer un processus par voiture
+        for (int i = 0; i < numPilots; ++i) {
+            pid_t pid = fork();
+
+            if (pid == -1) {
+                perror("Erreur lors de la création du processus fils");
+                exit(EXIT_FAILURE);
+            }
+            if (pid == 0) {
+                // Code exécuté par le processus fils
+                srand(time(NULL) ^ getpid());
+                for (int tour = 1; tour <= nbToursP(5); ++tour) {
+                    float lapTime = 0;
+
+                    // Générer trois temps aléatoires et mettre à jour la SharedMemory
+                    for (int j = 0; j < 3; ++j) {
+                        float randomTime = getRandomTime(5);
+                        attachedMemory->pilots[i].totalTime += randomTime; // Incrementer le temps total
+                        lapTime += randomTime;
+
+                        // Vérifier et mettre à jour la SharedMemory si nécessaire pour les temps par secteur
+                        if (attachedMemory->pilots[i].sectorTimes[j] == 0 || randomTime < attachedMemory->pilots[i].sectorTimes[j]) {
+                            attachedMemory->pilots[i].sectorTimes[j] = randomTime;
+                        }
+
+                        //sleep(1); // Utiliser la fonction sleep pour ralentir le programme
+                    }
+                    // Vérifier et mettre à jour la SharedMemory si nécessaire pour le meilleur temps
+                    if (attachedMemory->pilots[i].bestLapTime == 0 || lapTime < attachedMemory->pilots[i].bestLapTime) {
+                        attachedMemory->pilots[i].bestLapTime = lapTime;
                     }
                 }
-            }
 
-            // Terminer le processus fils
-            exit(EXIT_SUCCESS);
+                // Terminer le processus fils
+                exit(EXIT_SUCCESS);
+            }
+        }
+
+        // Attendre que tous les processus fils se terminent
+        for (int i = 0; i < numPilots; ++i) {
+            wait(NULL);
+        }
+
+        // Terminer le processus fils pour l'affichage
+        kill(pid_display, SIGTERM);
+        displayResults(attachedMemory);
+
+        // Afficher un message entre chaque boucle
+        if (k < 3) {
+            printf("\nAppuyez sur Entrée pour passer à la session P%d\n", k + 1);
+            getchar(); // Attendre que l'utilisateur appuie sur Entrée
         }
     }
-
-    // Attendre que tous les processus fils se terminent
-    for (int i = 0; i < numPilots; ++i) {
-        wait(NULL);
-    }
-
-    displayResults(attachedMemory);
 
     // Détacher la mémoire partagée dans le processus parent
     if (shmdt(attachedMemory) == -1) {
