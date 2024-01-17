@@ -1,6 +1,6 @@
 // customCSV.h
-#ifndef UTILS_H
-#define UTILS_H
+#ifndef CUSTOMCSV_H
+#define CUSTOMCSV_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -82,11 +82,11 @@ int readPilotsCSVFile(const char *filename, struct Pilot pilots[], int *rowIndex
 #define MAX_ROWS 25
 
 struct Track {
-    char Num[50];
+    int Num;
     char City[50];
-    char DATE[10];
+    char DATE[20];
     char Country[50];
-    char Name[50];
+    char Name[100];
     float Size;
     char Race[50];
     char TrackName[50];
@@ -123,6 +123,41 @@ int readTracksCSVFile(const char *filename, struct Track tracks[]) {
     fclose(file);
 
     return i;  // Retourne le le nombre de lignes lues
+}
+
+// Fonction pour obtenir une piste par son index
+struct Track getTrackByIndex(const char *tracksFilePath, int index) {
+    FILE *file = fopen(tracksFilePath, "r");
+    if (!file) {
+        fprintf(stderr, "Erreur d'ouverture du fichier des pistes.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    // Ignorer la première ligne (en-têtes)
+    char line[256];
+    fgets(line, sizeof(line), file);
+
+    // Parcourir les lignes pour trouver la piste correspondante
+    int currentIndex = 0;
+    while (fgets(line, sizeof(line), file) != NULL) {
+        if (currentIndex == index) {
+            struct Track track;
+            sscanf(line, "%d,%49[^,],%19[^,],%49[^,],%99[^,],%f,%49[^,],%49[^,],%19[^,\n]",
+                   &track.Num, track.City, track.DATE, track.Country, track.Name,
+                   &track.Size, track.Race, track.TrackName, track.Date);
+
+            fclose(file);
+            return track;
+        }
+
+        currentIndex++;
+    }
+
+    fclose(file);
+
+    // Si l'index est en dehors de la plage des pistes, retourner une piste avec un index invalide
+    struct Track invalidTrack = {-1, "", "", "", "", 0.0, "", "", ""};
+    return invalidTrack;
 }
 
 #endif
