@@ -5,15 +5,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <sys/wait.h>
 #include <sys/shm.h>
 #include <sys/types.h>
 #include <sys/ipc.h>
+#include <string.h>
 
 #include "../utils.h"
 #include "../utils/customJSON.h"
 
+
 void simulateFreePractice(SharedMemory *sharedMemory) {
+
+    float trackLength = getTrackByIndex("./data/tracks.csv", getLastTrackValue(readJSONFile("./data/data.json"))+1).Size;
+
     // Initialiser la mémoire partagée
     initializeSharedMemory(sharedMemory);
 
@@ -48,28 +52,9 @@ void simulateFreePractice(SharedMemory *sharedMemory) {
         // Reinitialiser la mémoire partagée
         initializeSharedMemory(attachedMemory);
 
-        // Créer un processus fils pour afficher les résultats toutes les 5 secondes
-        pid_t pid_display = fork();
-        if (pid_display == -1) {
-            perror("Erreur lors de la création du processus fils pour l'affichage");
-            exit(EXIT_FAILURE);
-        }
-        if (pid_display == 0) {
-            // Code exécuté par le processus fils pour l'affichage
-            while (1) {
-                // Effacer la console
-                system("clear"); // Utiliser la commande clear pour Linux ou macOS
-                // Afficher les résultats
-                displayResults(attachedMemory);
-                // Attendre 5 secondes
-                sleep(5); // Utiliser la fonction sleep pour ralentir le programme
-            }
-        }
-
         // Boucle pour créer un processus par voiture
         for (int i = 0; i < numPilots; ++i) {
             pid_t pid = fork();
-
             if (pid == -1) {
                 perror("Erreur lors de la création du processus fils");
                 exit(EXIT_FAILURE);
@@ -77,12 +62,13 @@ void simulateFreePractice(SharedMemory *sharedMemory) {
             if (pid == 0) {
                 // Code exécuté par le processus fils
                 srand(time(NULL) ^ getpid());
-                for (int tour = 1; tour <= nbToursP(5); ++tour) {
+                for (int tour = 1; tour <= nbToursP(trackLength); ++tour) {
+
                     float lapTime = 0;
 
                     // Générer trois temps aléatoires et mettre à jour la SharedMemory
                     for (int j = 0; j < 3; ++j) {
-                        float randomTime = getRandomTime(5);
+                        float randomTime = getRandomTime(trackLength);
                         attachedMemory->pilots[i].totalTime += randomTime; // Incrementer le temps total
                         lapTime += randomTime;
 
@@ -90,8 +76,6 @@ void simulateFreePractice(SharedMemory *sharedMemory) {
                         if (attachedMemory->pilots[i].sectorTimes[j] == 0 || randomTime < attachedMemory->pilots[i].sectorTimes[j]) {
                             attachedMemory->pilots[i].sectorTimes[j] = randomTime;
                         }
-
-                        // sleep(1); // Utiliser la fonction sleep pour ralentir le programme
                     }
                     // Vérifier et mettre à jour la SharedMemory si nécessaire pour le meilleur temps
                     if (attachedMemory->pilots[i].bestLapTime == 0 || lapTime < attachedMemory->pilots[i].bestLapTime) {
@@ -104,14 +88,11 @@ void simulateFreePractice(SharedMemory *sharedMemory) {
             }
         }
 
-        // Attendre que tous les processus fils se terminent
-        for (int i = 0; i < numPilots; ++i) {
-            wait(NULL);
-        }
-
-        // Terminer le processus fils pour l'affichage
-        kill(pid_display, SIGTERM);
         displayResults(attachedMemory);
+        // Concatenate strings and format numbers
+        char fileName[100];
+        snprintf(fileName, sizeof(fileName), "Track%d_P%d", getLastTrackValue(readJSONFile("./data/data.json")) + 1, k);
+        saveResults(attachedMemory, "./data/westats", fileName);
 
         // Afficher un message entre chaque boucle
         if (k < 3) {

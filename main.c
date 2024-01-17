@@ -26,9 +26,9 @@ void simulateNormalWeekend() {
         if (i == 0) {
             simulateFreePractice(&sharedMemory);
         } else if (i == 1) {
-            simulateQualification();
+            simulateQualifications(&sharedMemory);
         } else if (i == 2) {
-            simulateRace();
+            simulateRace(&sharedMemory);
         }
     }
 }

@@ -6,6 +6,10 @@
 #include <stdlib.h>
 #include <time.h>
 #include <float.h>
+#include <unistd.h>
+
+// For mkdir function on Unix-like systems
+#include <sys/stat.h>
 
 #include "utils/customCSV.h"
 
@@ -112,32 +116,55 @@ void displayResults(SharedMemory *sharedMemory) {
     }
 }
 
-// Fonction pour sauvegarder les résultats dans un fichier CSV
-void saveResults(int index, SharedMemory *sharedMemory) {
-    char filename[50];
-    snprintf(filename, sizeof(filename), "/data/westats/%d.csv", index);
 
-    FILE *file = fopen(filename, "w");
-    if (!file) {
-        perror("Erreur d'ouverture du fichier pour sauvegarde");
+#define MAX_PATH_LENGTH 256
+
+// Function to save the results to a CSV file
+void saveResults(SharedMemory *sharedMemory,  const char *directoryName, const char *filename) {
+    // Create the "westats" directory if it doesn't exist
+    if (mkdir(directoryName, 0777) == -1) {
+        // Directory already exists or there was an error
+        // You might want to add additional error handling here
+    }
+
+    // Create the CSV file path
+    char filePath[MAX_PATH_LENGTH];
+    snprintf(filePath, sizeof(filePath), "%s/%s.csv", directoryName, filename);
+
+    // Open the file for writing
+    FILE *file = fopen(filePath, "w");
+    if (file == NULL) {
+        perror("Error opening file for writing");
         exit(EXIT_FAILURE);
     }
 
-    // En-têtes du fichier CSV
-    fprintf(file, "Pilote,Secteur 1,Secteur 2,Secteur 3,Meilleur Tour,Total\n");
+    // Write the CSV header
+    fprintf(file, "Num,Pilote,Secteur 1,Secteur 2,Secteur 3,Meilleur Tour\n");
 
-    // Écriture des données dans le fichier
+    // Write the race results to the CSV file
     for (int i = 0; i < NUM_PILOTS; ++i) {
-        fprintf(file, "%s,%.2f,%.2f,%.2f,%.2f,%.2f\n",
-                sharedMemory->pilots[i].Name,
-                sharedMemory->pilots[i].sectorTimes[0],
-                sharedMemory->pilots[i].sectorTimes[1],
-                sharedMemory->pilots[i].sectorTimes[2],
-                sharedMemory->pilots[i].bestLapTime,
-                sharedMemory->pilots[i].totalTime);
+        fprintf(file, "%d,%s,%.2f,%.2f,%.2f,%.2f\n",
+                sharedMemory->pilots[i].Num, sharedMemory->pilots[i].Name,
+                sharedMemory->pilots[i].sectorTimes[0], sharedMemory->pilots[i].sectorTimes[1],
+                sharedMemory->pilots[i].sectorTimes[2], sharedMemory->pilots[i].bestLapTime);
     }
 
+    // Close the file
     fclose(file);
+
+    printf("Results saved to %s\n", filePath);
+}
+
+void periodicDisplayResults(SharedMemory *attachedMemory) {
+    while (1) {
+        system("clear");  // Clear the console
+
+        // Display the results
+        displayResults(attachedMemory);
+
+        // Wait for 5 seconds before the next display
+        sleep(5);
+    }
 }
 
 #endif
