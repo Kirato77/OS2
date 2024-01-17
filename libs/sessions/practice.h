@@ -91,7 +91,7 @@ void simulateFreePractice(SharedMemory *sharedMemory) {
                             attachedMemory->pilots[i].sectorTimes[j] = randomTime;
                         }
 
-                        //sleep(1); // Utiliser la fonction sleep pour ralentir le programme
+                        // sleep(1); // Utiliser la fonction sleep pour ralentir le programme
                     }
                     // Vérifier et mettre à jour la SharedMemory si nécessaire pour le meilleur temps
                     if (attachedMemory->pilots[i].bestLapTime == 0 || lapTime < attachedMemory->pilots[i].bestLapTime) {
