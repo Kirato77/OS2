@@ -19,6 +19,8 @@ float getRandomTime(int trackLength) {
     float tmax = ((trackLength * 1000.0) / vmin) * 1000.0;
     float tmin = ((trackLength * 1000.0) / vmax) * 1000.0;
 
+    srand(time(NULL));
+
     // Generate random number between 0 and RAND_MAX
     int randomNumber = rand();
 
@@ -67,20 +69,20 @@ void initializeSharedMemory(SharedMemory *sharedMemory) {
 // Fonction pour afficher le tableau des résultats
 void displayResults(SharedMemory *sharedMemory) {
     printf("\nTableau des résultats :\n");
-    printf("---------------------------------------------------------\n");
-    printf("| Pilote | Secteur 1 | Secteur 2 | Secteur 3 | Meilleur Tour | Total |\n");
-    printf("---------------------------------------------------------\n");
+    printf("----------------------------------------------------------------------------------\n");
+    printf("| %-10s | %-10s | %-10s | %-10s | %-13s | %-10s |\n", "Pilote", "Secteur 1", "Secteur 2", "Secteur 3", "Meilleur Tour", "Total");
+    printf("----------------------------------------------------------------------------------\n");
 
     for (int i = 0; i < NUM_PILOTS; ++i) {
-        printf("|   %s   |", sharedMemory->pilots[i].Name);
+        printf("| %-10s |", sharedMemory->pilots[i].Name);
 
         for (int sector = 0; sector < NUM_SECTORS; ++sector) {
-            printf("   %.2f   |", sharedMemory->pilots[i].sectorTimes[sector]);
+            printf(" %-10.2f |", sharedMemory->pilots[i].sectorTimes[sector]);
         }
 
-        printf("   %.2f   |", sharedMemory->pilots[i].bestLapTime);
-        printf("   %.2f   |\n", sharedMemory->pilots[i].totalTime);
-        printf("---------------------------------------------------------\n");
+        printf(" %-13.2f |", sharedMemory->pilots[i].bestLapTime);
+        printf(" %-10.2f |\n", sharedMemory->pilots[i].totalTime);
+        printf("-----------------------------------------------------------------------------------\n");
     }
 
     // Afficher les meilleurs temps par secteur parmi tous les pilotes
