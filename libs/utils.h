@@ -68,7 +68,7 @@ void initializeSharedMemory(SharedMemory *sharedMemory) {
 void displayResults(SharedMemory *sharedMemory) {
     printf("\nTableau des résultats :\n");
     printf("------------------------------------------------------------------------------------------------------------------------\n");
-    printf("| %-10s | %-10s | %-10s | %-10s | %-13s | %-10s | %-10s | %-10s | %-10s |\n", "Pilote", "Secteur 1", "Secteur 2", "Secteur 3", "Meilleur Tour", "Total", "DIFF", "PIT", "OUT");
+    printf("\033[1m| %-10s | %-10s | %-10s | %-10s | %-13s | %-10s | %-10s | %-10s | %-10s |\033[Om\n", "Pilote", "Secteur 1", "Secteur 2", "Secteur 3", "Meilleur Tour", "Total", "DIFF", "PIT", "OUT");
     printf("------------------------------------------------------------------------------------------------------------------------\n");
 
     for (int i = 0; i < NUM_PILOTS; ++i) {
