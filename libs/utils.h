@@ -66,13 +66,15 @@ void initializeSharedMemory(SharedMemory *sharedMemory) {
 
 // Fonction pour afficher le tableau des résultats
 void displayResults(SharedMemory *sharedMemory) {
-    printf("\nTableau des résultats :\n");
-    printf("------------------------------------------------------------------------------------------------------------------------\n");
-    printf("\033[1m| %-10s | %-10s | %-10s | %-10s | %-13s | %-10s | %-10s | %-10s | %-10s |\033[Om\n", "Pilote", "Secteur 1", "Secteur 2", "Secteur 3", "Meilleur Tour", "Total", "DIFF", "PIT", "OUT");
-    printf("------------------------------------------------------------------------------------------------------------------------\n");
+    printf("\n\033[1;35mTableau des résultats :\033[0m\n");
+    printf("\033[1;31m------------------------------------------------------------------------------------------------------------------------------------------\n");
+    printf("| %-5s | %-5s | %-10s | %-10s | %-10s | %-10s | %-13s | %-10s | %-10s | %-10s | %-10s |\n","nb" ,"Numéro", "Pilote", "Secteur 1", "Secteur 2", "Secteur 3", "Meilleur Tour", "Total", "DIFF", "PIT", "OUT");
+    printf("------------------------------------------------------------------------------------------------------------------------------------------\033[0m\n");
 
     for (int i = 0; i < NUM_PILOTS; ++i) {
-        printf("| %-10s |", sharedMemory->pilots[i].Name);
+        printf("\033[1;33m| %-5d |", i+1);
+        printf(" %-5d  |", sharedMemory->pilots[i].Num);
+        printf(" %-10s |", sharedMemory->pilots[i].Name);
 
         for (int sector = 0; sector < NUM_SECTORS; ++sector) {
             printf(" %-10.2f |", sharedMemory->pilots[i].sectorTimes[sector]);
@@ -89,7 +91,7 @@ void displayResults(SharedMemory *sharedMemory) {
         printf(" %-10.2f |", diff);
         printf(" %-10.d |", sharedMemory->pilots[i].pit);
         printf(" %-10.d |\n", sharedMemory->pilots[i].out);
-        printf("-------------------------------------------------------------------------------------------------------------------------\n");
+        printf("------------------------------------------------------------------------------------------------------------------------------------------\033[0m\n");
     }
 
     // Afficher les meilleurs temps par secteur parmi tous les pilotes
