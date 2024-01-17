@@ -108,7 +108,7 @@ int readTracksCSVFile(const char *filename, struct Track tracks[]) {
     char row[1024];
     int i = 0;
 
-    // Ignorer la première ligne (headers)
+    // Ignorer la premiÃ¨re ligne (headers)
     fgets(row, sizeof(row), file);
 
     while (fgets(row, sizeof(row), file) != NULL) {
@@ -121,7 +121,7 @@ int readTracksCSVFile(const char *filename, struct Track tracks[]) {
         i++;
 
         if (i >= MAX_ROWS) {
-            break;  // Limiter le nombre de lignes lues pour éviter le dépassement de tableau
+            break;  // Limiter le nombre de lignes lues pour Ã©viter le dÃ©passement de tableau
         }
     }
 
@@ -138,7 +138,7 @@ struct Track getTrackByIndex(const char *tracksFilePath, int index) {
         exit(EXIT_FAILURE);
     }
 
-    // Ignorer la première ligne (en-têtes)
+    // Ignorer la premiÃ¨re ligne (en-tÃªtes)
     char line[256];
     fgets(line, sizeof(line), file);
 

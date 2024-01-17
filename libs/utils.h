@@ -67,9 +67,9 @@ void initializeSharedMemory(SharedMemory *sharedMemory) {
 // Fonction pour afficher le tableau des résultats
 void displayResults(SharedMemory *sharedMemory) {
     printf("\nTableau des résultats :\n");
-    printf("----------------------------------------------------------------------------------\n");
-    printf("| %-10s | %-10s | %-10s | %-10s | %-13s | %-10s |\n", "Pilote", "Secteur 1", "Secteur 2", "Secteur 3", "Meilleur Tour", "Total");
-    printf("----------------------------------------------------------------------------------\n");
+    printf("------------------------------------------------------------------------------------------------------------------------\n");
+    printf("| %-10s | %-10s | %-10s | %-10s | %-13s | %-10s | %-10s | %-10s | %-10s |\n", "Pilote", "Secteur 1", "Secteur 2", "Secteur 3", "Meilleur Tour", "Total", "DIFF", "PIT", "OUT");
+    printf("------------------------------------------------------------------------------------------------------------------------\n");
 
     for (int i = 0; i < NUM_PILOTS; ++i) {
         printf("| %-10s |", sharedMemory->pilots[i].Name);
@@ -77,10 +77,19 @@ void displayResults(SharedMemory *sharedMemory) {
         for (int sector = 0; sector < NUM_SECTORS; ++sector) {
             printf(" %-10.2f |", sharedMemory->pilots[i].sectorTimes[sector]);
         }
-
+        float diff = 0;
+        if (i != 0){
+            diff = sharedMemory->pilots[i-1].totalTime - sharedMemory->pilots[i].totalTime;
+        }
+        else {
+            diff = 0;
+        }
         printf(" %-13.2f |", sharedMemory->pilots[i].bestLapTime);
-        printf(" %-10.2f |\n", sharedMemory->pilots[i].totalTime);
-        printf("-----------------------------------------------------------------------------------\n");
+        printf(" %-10.2f |", sharedMemory->pilots[i].totalTime);
+        printf(" %-10.2f |", diff);
+        printf(" %-10.d |", sharedMemory->pilots[i].pit);
+        printf(" %-10.d |\n", sharedMemory->pilots[i].out);
+        printf("-------------------------------------------------------------------------------------------------------------------------\n");
     }
 
     // Afficher les meilleurs temps par secteur parmi tous les pilotes
