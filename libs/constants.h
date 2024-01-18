@@ -1,11 +1,11 @@
 // constants.h
 #ifndef CONSTANTS_H
-#define CONSTANTE_H
+#define CONSTANTS_H
 
-#include <semaphore.h>
-
+#define DATA_STATS_DIR "./data/westats"
+#define DATA_JSON_FILE "./data/data.json"
 #define PROBABILITY_STAND 0.1  // 10% de chance d'aller au stand
-#define PROBABILITY_OUT 0.01// 1% de chance d'abandonner la scéance
+#define PROBABILITY_OUT 0.01 // 1% de chance d'abandonner la scéance
 #define TIME_MULTIPLIER 135
 
 #endif

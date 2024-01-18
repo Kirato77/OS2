@@ -88,7 +88,9 @@ void simulateFreePractice(SharedMemory *sharedMemory) {
                     usleep((int)(lapTime/TIME_MULTIPLIER*1000000));
                     if (currentProcessNumber == 1) {
                         system("clear");
-                        displayResults(attachedMemory);
+                        // Sort the pilots array based on totalTime
+
+                        displayResults(attachedMemory, 0, comparePilotsBestLap);
                     }
                 }
 
@@ -99,11 +101,11 @@ void simulateFreePractice(SharedMemory *sharedMemory) {
         }
 
         while(wait(NULL) > 0);
-        displayResults(attachedMemory);
+
         // Concatenate strings and format numbers
         char fileName[100];
-        snprintf(fileName, sizeof(fileName), "Track%d_P%d", getLastTrackValue(readJSONFile("./data/data.json")) + 1, k);
-        saveResults(attachedMemory, "./data/westats", fileName);
+        snprintf(fileName, sizeof(fileName), "Track%d_P%d", getLastTrackValue(readJSONFile(DATA_JSON_FILE)) + 1, k);
+        saveResults(attachedMemory, DATA_STATS_DIR, fileName);
 
         // Afficher un message entre chaque boucle
         if (k < 3) {

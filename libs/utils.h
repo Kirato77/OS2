@@ -68,12 +68,44 @@ void initializeSharedMemory(SharedMemory *sharedMemory) {
     }
 }
 
+// Comparison functions for qsort
+int comparePilotsTotalTime(const void *a, const void *b) {
+    // Assuming totalTime is an integer field
+    return ((struct Pilot *)a)->totalTime - ((struct Pilot *)b)->totalTime;
+}
+int comparePilotsBestLap(const void *a, const void *b) {
+    // Assuming bestLapTime is a float
+    float timeA = ((struct Pilot *)a)->bestLapTime;
+    float timeB = ((struct Pilot *)b)->bestLapTime;
+
+    // Compare bestLapTime values
+    if (timeA < timeB) {
+        return -1;
+    } else if (timeA > timeB) {
+        return 1;
+    } else {
+        return 0; // bestLapTime values are equal
+    }
+}
+
 // Fonction pour afficher le tableau des résultats
-void displayResults(SharedMemory *sharedMemory) {
+void displayResults(SharedMemory *sharedMemory, const int showTotalTime, int (*operation)(int, int)) {
+
+    qsort(sharedMemory->pilots, sizeof(sharedMemory->pilots) / sizeof(sharedMemory->pilots[0]), sizeof(sharedMemory->pilots[0]), comparePilotsBestLap);
+
     printf("\n\033[1;35mTableau des résultats :\033[0m\n");
-    printf("\033[1;31m------------------------------------------------------------------------------------------------------------------------------------------\n");
-    printf("| %-5s | %-5s | %-10s | %-10s | %-10s | %-10s | %-13s | %-10s | %-10s | %-10s | %-10s |\n","nb" ,"Numéro", "Pilote", "Secteur 1", "Secteur 2", "Secteur 3", "Meilleur Tour", "Total", "DIFF", "PIT", "OUT");
-    printf("------------------------------------------------------------------------------------------------------------------------------------------\033[0m\n");
+    const char *bar = "------------------------------------------------------------------------------------------------------------------------------------------\033[0m\n";
+    if (showTotalTime == 0) {
+        bar = "----------------------------------------------------------------------------------------------------------------\033[0m\n";
+        printf("\033[1;31m----------------------------------------------------------------------------------------------------------------\n");
+        printf("| %-5s | %-5s | %-10s | %-10s | %-10s | %-10s | %-13s | %-10s | %-10s |\n","nb" ,"Numéro", "Pilote", "Secteur 1", "Secteur 2", "Secteur 3", "Meilleur Tour", "PIT", "OUT");
+        printf(bar);
+
+    } else {
+        printf("\033[1;31m------------------------------------------------------------------------------------------------------------------------------------------\n");
+        printf("| %-5s | %-5s | %-10s | %-10s | %-10s | %-10s | %-13s | %-10s | %-10s | %-10s | %-10s |\n","nb" ,"Numéro", "Pilote", "Secteur 1", "Secteur 2", "Secteur 3", "Meilleur Tour", "Total", "DIFF", "PIT", "OUT");
+        printf(bar);
+    }
 
     for (int i = 0; i < NUM_PILOTS; ++i) {
         printf("\033[1;33m| %-5d |", i+1);
@@ -95,11 +127,13 @@ void displayResults(SharedMemory *sharedMemory) {
             diff = 0;
         }
         printf(" %-13.2f |", sharedMemory->pilots[i].bestLapTime);
-        printf(" %-10.2f |", sharedMemory->pilots[i].totalTime);
-        printf(" %-10.2f |", diff);
+        if (showTotalTime == 1) {
+            printf(" %-10.2f |", sharedMemory->pilots[i].totalTime);
+            printf(" %-10.2f |", diff);
+        }
         printf(" %-10.d |", sharedMemory->pilots[i].pit);
         printf(" %-10.d |\n", sharedMemory->pilots[i].out);
-        printf("------------------------------------------------------------------------------------------------------------------------------------------\033[0m\n");
+        printf(bar);
     }
 
     // Afficher les meilleurs temps par secteur parmi tous les pilotes
@@ -157,18 +191,6 @@ void saveResults(SharedMemory *sharedMemory,  const char *directoryName, const c
     fclose(file);
 
     printf("Results saved to %s\n", filePath);
-}
-
-void periodicDisplayResults(SharedMemory *attachedMemory) {
-    while (1) {
-        system("clear");  // Clear the console
-
-        // Display the results
-        displayResults(attachedMemory);
-
-        // Wait for 5 seconds before the next display
-        sleep(5);
-    }
 }
 
 #endif

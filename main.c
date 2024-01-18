@@ -35,7 +35,31 @@ void simulateNormalWeekend() {
 
 // Function to simulate a special weekend
 void simulateSpecialWeekend() {
+    SharedMemory sharedMemory;
     printf("Simulation du week-end en mode spécial...\n");
+
+    // Liste des sessions
+    char *sessions[] = {"Essais libres", "Qualifications", "Qualifications Sprint", "Sprint", "Course"};
+    int numSessions = sizeof(sessions) / sizeof(sessions[0]);
+
+    // Boucle pour chaque session
+    for (int i = 0; i < numSessions; ++i) {
+        printf("Appuyez sur Entrée pour commencer la session %s...", sessions[i]);
+        clearBuffer();  // Attend l'appui sur Entrée
+
+        // Appeler la session correspondante
+        if (i == 0) {
+            simulateFreePractice(&sharedMemory);
+        } else if (i == 1) {
+            simulateQualifications(&sharedMemory);
+        } else if (i == 2) {
+            simulateQualifications(&sharedMemory);
+        } else if (i == 3) {
+            simulateSprint(&sharedMemory);
+        } else if (i == 4) {
+            simulateRace(&sharedMemory);
+        }
+    }
 }
 
 void printScores() {

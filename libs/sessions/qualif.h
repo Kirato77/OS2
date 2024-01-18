@@ -97,7 +97,7 @@ void simulateQualifications(SharedMemory *sharedMemory) {
         }
 
 
-        displayResults(attachedMemory);
+        displayResults(attachedMemory, 0, comparePilotsBestLap);
         // Concatenate strings and format numbers
         char fileName[100];
         snprintf(fileName, sizeof(fileName), "Track%d_Q%d", getLastTrackValue(readJSONFile("./data/data.json")) + 1, k);

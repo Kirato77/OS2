@@ -83,7 +83,7 @@ void simulateSprint(SharedMemory *sharedMemory) {
             exit(EXIT_SUCCESS);
         }
     }
-    displayResults(attachedMemory);
+    displayResults(attachedMemory, 1, comparePilotsTotalTime);
     // Concatenate strings and format numbers
     char fileName[100];
     snprintf(fileName, sizeof(fileName), "Track%d_SPRINT", getLastTrackValue(readJSONFile("./data/data.json")) + 1);
