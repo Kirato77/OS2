@@ -8,9 +8,11 @@
 #include <sys/shm.h>
 #include <sys/types.h>
 #include <sys/ipc.h>
+#include <sys/wait.h>
 #include <string.h>
 
 #include "../utils.h"
+#include "../constants.h"
 #include "../utils/customJSON.h"
 
 
@@ -52,6 +54,8 @@ void simulateFreePractice(SharedMemory *sharedMemory) {
         // Reinitialiser la mémoire partagée
         initializeSharedMemory(attachedMemory);
 
+        int currentProcessNumber = 1;
+
         // Boucle pour créer un processus par voiture
         for (int i = 0; i < numPilots; ++i) {
             pid_t pid = fork();
@@ -81,13 +85,20 @@ void simulateFreePractice(SharedMemory *sharedMemory) {
                     if (attachedMemory->pilots[i].bestLapTime == 0 || lapTime < attachedMemory->pilots[i].bestLapTime) {
                         attachedMemory->pilots[i].bestLapTime = lapTime;
                     }
+                    usleep((int)(lapTime/TIME_MULTIPLIER*1000000));
+                    if (currentProcessNumber == 1) {
+                        system("clear");
+                        displayResults(attachedMemory);
+                    }
                 }
 
                 // Terminer le processus fils
                 exit(EXIT_SUCCESS);
             }
+            currentProcessNumber++;
         }
 
+        while(wait(NULL) > 0);
         displayResults(attachedMemory);
         // Concatenate strings and format numbers
         char fileName[100];

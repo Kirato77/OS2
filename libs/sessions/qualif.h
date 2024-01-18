@@ -9,10 +9,12 @@
 #include <sys/types.h>
 #include <sys/ipc.h>
 #include <string.h>
+#include <semaphore.h>
 
 #include "../utils.h"
 #include "../utils/customJSON.h"
 
+sem_t semaphore;
 
 void simulateQualifications(SharedMemory *sharedMemory) {
 
@@ -44,6 +46,12 @@ void simulateQualifications(SharedMemory *sharedMemory) {
 
     // Copier le contenu de sharedMemory dans la mémoire partagée
     memcpy(attachedMemory, sharedMemory, sizeof(SharedMemory)); // Utiliser la fonction memcpy pour copier les données
+
+    // Initialisation du sémaphore pour la mémoire partagée
+    if (sem_init(&semaphore, 0, 1) != 0) {
+        perror("sem_init");
+        exit(1);
+    }
 
     // Nombre de pilotes
     int numPilots = sizeof(attachedMemory->pilots) / sizeof(attachedMemory->pilots[0]);
@@ -87,6 +95,7 @@ void simulateQualifications(SharedMemory *sharedMemory) {
                 exit(EXIT_SUCCESS);
             }
         }
+
 
         displayResults(attachedMemory);
         // Concatenate strings and format numbers

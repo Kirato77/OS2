@@ -78,7 +78,11 @@ void displayResults(SharedMemory *sharedMemory) {
     for (int i = 0; i < NUM_PILOTS; ++i) {
         printf("\033[1;33m| %-5d |", i+1);
         printf(" %-5d  |", sharedMemory->pilots[i].Num);
-        printf(" %-10s |", sharedMemory->pilots[i].Name);
+        printf(" %-10s", sharedMemory->pilots[i].Name);
+        if(strstr(sharedMemory->pilots[i].Name, "é") != NULL) { // lmao C
+            printf(" ");
+        }
+        printf(" |");
 
         for (int sector = 0; sector < NUM_SECTORS; ++sector) {
             printf(" %-10.2f |", sharedMemory->pilots[i].sectorTimes[sector]);
