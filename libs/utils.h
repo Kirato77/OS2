@@ -81,24 +81,24 @@ int comparePilotsBestLap(const void *a, const void *b) {
     // Compare bestLapTime values
     if (timeA < timeB) {
         return -1;
-    } else if (timeA > timeB) {
-        return 1;
-    } else {
-        return 0; // bestLapTime values are equal
     }
+    if (timeA > timeB) {
+        return 1;
+    }
+    return 0; // bestLapTime values are equal
 }
 
 // Fonction pour afficher le tableau des résultats
 void displayResults(SharedMemory *sharedMemory, const int showTotalTime, int (*operation)(int, int)) {
 
-    qsort(sharedMemory->pilots, sizeof(sharedMemory->pilots) / sizeof(sharedMemory->pilots[0]), sizeof(sharedMemory->pilots[0]), comparePilotsBestLap);
+    qsort(sharedMemory->pilots, sizeof(sharedMemory->pilots) / sizeof(sharedMemory->pilots[0]), sizeof(sharedMemory->pilots[0]), *operation);
 
     printf("\n\033[1;35mTableau des résultats :\033[0m\n");
     const char *bar = "------------------------------------------------------------------------------------------------------------------------------------------\033[0m\n";
     if (showTotalTime == 0) {
-        bar = "----------------------------------------------------------------------------------------------------------------\033[0m\n";
-        printf("\033[1;31m----------------------------------------------------------------------------------------------------------------\n");
-        printf("| %-5s | %-5s | %-10s | %-10s | %-10s | %-10s | %-13s | %-10s | %-10s |\n","nb" ,"Numéro", "Pilote", "Secteur 1", "Secteur 2", "Secteur 3", "Meilleur Tour", "PIT", "OUT");
+        bar = "-----------------------------------------------------------------------------------------------------------------------------\033[0m\n";
+        printf("\033[1;31m-----------------------------------------------------------------------------------------------------------------------------\n");
+        printf("| %-5s | %-5s | %-10s | %-10s | %-10s | %-10s | %-13s | %-10s | %-10s | %-10s |\n","nb" ,"Numéro", "Pilote", "Secteur 1", "Secteur 2", "Secteur 3", "Meilleur Tour", "DIFF", "PIT", "OUT");
         printf(bar);
 
     } else {
@@ -121,7 +121,11 @@ void displayResults(SharedMemory *sharedMemory, const int showTotalTime, int (*o
         }
         float diff = 0;
         if (i != 0){
-            diff = sharedMemory->pilots[i-1].totalTime - sharedMemory->pilots[i].totalTime;
+            if (showTotalTime == 1) {
+                diff = sharedMemory->pilots[i-1].totalTime - sharedMemory->pilots[i].totalTime;
+            } else {
+                diff = sharedMemory->pilots[i-1].bestLapTime - sharedMemory->pilots[i].bestLapTime;
+            }
         }
         else {
             diff = 0;
@@ -129,10 +133,14 @@ void displayResults(SharedMemory *sharedMemory, const int showTotalTime, int (*o
         printf(" %-13.2f |", sharedMemory->pilots[i].bestLapTime);
         if (showTotalTime == 1) {
             printf(" %-10.2f |", sharedMemory->pilots[i].totalTime);
-            printf(" %-10.2f |", diff);
         }
-        printf(" %-10.d |", sharedMemory->pilots[i].pit);
-        printf(" %-10.d |\n", sharedMemory->pilots[i].out);
+        printf(" %-10.2f |", diff);
+
+        // Print "PIT" if .pit is 1, nothing otherwise
+        printf(" %-10s |", sharedMemory->pilots[i].pit == 1 ? "PIT" : "");
+        // Print "OUT" if .out is 1, nothing otherwise
+        printf(" %-10s |\n", sharedMemory->pilots[i].out == 1 ? "OUT" : "");
+
         printf(bar);
     }
 
@@ -162,7 +170,6 @@ void saveResults(SharedMemory *sharedMemory,  const char *directoryName, const c
     // Create the "westats" directory if it doesn't exist
     if (mkdir(directoryName, 0777) == -1) {
         // Directory already exists or there was an error
-        // You might want to add additional error handling here
     }
 
     // Create the CSV file path
@@ -175,6 +182,8 @@ void saveResults(SharedMemory *sharedMemory,  const char *directoryName, const c
         perror("Error opening file for writing");
         exit(EXIT_FAILURE);
     }
+
+    qsort(sharedMemory->pilots, sizeof(sharedMemory->pilots) / sizeof(sharedMemory->pilots[0]), sizeof(sharedMemory->pilots[0]), comparePilotsBestLap);
 
     // Write the CSV header
     fprintf(file, "Num,Pilote,Secteur 1,Secteur 2,Secteur 3,Meilleur Tour\n");

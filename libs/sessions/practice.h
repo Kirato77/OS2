@@ -69,6 +69,7 @@ void simulateFreePractice(SharedMemory *sharedMemory) {
                 for (int tour = 1; tour <= nbToursP(trackLength); ++tour) {
 
                     float lapTime = 0;
+                    int outChance = rand() % 100 + 1;
 
                     // Générer trois temps aléatoires et mettre à jour la SharedMemory
                     for (int j = 0; j < 3; ++j) {
@@ -76,20 +77,26 @@ void simulateFreePractice(SharedMemory *sharedMemory) {
                         attachedMemory->pilots[i].totalTime += randomTime; // Incrementer le temps total
                         lapTime += randomTime;
 
+                        // Une chance pour la voiture d'être "out"
+                        if (outChance <= OUT_CHANCE_PERCENTAGE) {
+                            attachedMemory->pilots[i].out = 1;
+                            exit(EXIT_SUCCESS);  // Terminate the process if the car is out
+                        }
+
                         // Vérifier et mettre à jour la SharedMemory si nécessaire pour les temps par secteur
                         if (attachedMemory->pilots[i].sectorTimes[j] == 0 || randomTime < attachedMemory->pilots[i].sectorTimes[j]) {
                             attachedMemory->pilots[i].sectorTimes[j] = randomTime;
                         }
                     }
+
                     // Vérifier et mettre à jour la SharedMemory si nécessaire pour le meilleur temps
                     if (attachedMemory->pilots[i].bestLapTime == 0 || lapTime < attachedMemory->pilots[i].bestLapTime) {
                         attachedMemory->pilots[i].bestLapTime = lapTime;
                     }
+
                     usleep((int)(lapTime/TIME_MULTIPLIER*1000000));
                     if (currentProcessNumber == 1) {
                         system("clear");
-                        // Sort the pilots array based on totalTime
-
                         displayResults(attachedMemory, 0, comparePilotsBestLap);
                     }
                 }
