@@ -89,7 +89,7 @@ int comparePilotsBestLap(const void *a, const void *b) {
 }
 
 // Fonction pour afficher le tableau des résultats
-void displayResults(SharedMemory *sharedMemory, const int showTotalTime, int (*operation)(int, int)) {
+void displayResults(SharedMemory *sharedMemory, const int showTotalTime, int (*operation)(const void *, const void *)) {
 
     qsort(sharedMemory->pilots, sizeof(sharedMemory->pilots) / sizeof(sharedMemory->pilots[0]), sizeof(sharedMemory->pilots[0]), *operation);
 
@@ -99,12 +99,12 @@ void displayResults(SharedMemory *sharedMemory, const int showTotalTime, int (*o
         bar = "-----------------------------------------------------------------------------------------------------------------------------\033[0m\n";
         printf("\033[1;31m-----------------------------------------------------------------------------------------------------------------------------\n");
         printf("| %-5s | %-5s | %-10s | %-10s | %-10s | %-10s | %-13s | %-10s | %-10s | %-10s |\n","nb" ,"Numéro", "Pilote", "Secteur 1", "Secteur 2", "Secteur 3", "Meilleur Tour", "DIFF", "PIT", "OUT");
-        printf(bar);
+        printf("%s", bar);
 
     } else {
         printf("\033[1;31m------------------------------------------------------------------------------------------------------------------------------------------\n");
         printf("| %-5s | %-5s | %-10s | %-10s | %-10s | %-10s | %-13s | %-10s | %-10s | %-10s | %-10s |\n","nb" ,"Numéro", "Pilote", "Secteur 1", "Secteur 2", "Secteur 3", "Meilleur Tour", "Total", "DIFF", "PIT", "OUT");
-        printf(bar);
+        printf("%s", bar);
     }
 
     for (int i = 0; i < NUM_PILOTS; ++i) {
@@ -141,7 +141,7 @@ void displayResults(SharedMemory *sharedMemory, const int showTotalTime, int (*o
         // Print "OUT" if .out is 1, nothing otherwise
         printf(" %-10s |\n", sharedMemory->pilots[i].out == 1 ? "OUT" : "");
 
-        printf(bar);
+        printf("%s", bar);
     }
 
     // Afficher les meilleurs temps par secteur parmi tous les pilotes

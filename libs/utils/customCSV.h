@@ -113,8 +113,8 @@ int readTracksCSVFile(const char *filename, struct Track tracks[]) {
 
     while (fgets(row, sizeof(row), file) != NULL) {
         // Utiliser sscanf pour extraire les valeurs de la ligne
-        sscanf(row, "%49[^;];%49[^;];%9[^;];%49[^;];%49[^;];%f;%49[^;];%49[^;];%9[^;]",
-               tracks[i].Num, tracks[i].City, tracks[i].DATE, tracks[i].Country,
+        sscanf(row, "%d[^;];%49[^;];%49[^;];%49[^;];%49[^;];%f;%49[^;];%49[^;];%9[^;]",
+               &tracks[i].Num, tracks[i].City, tracks[i].DATE, tracks[i].Country,
                tracks[i].Name, &tracks[i].Size, tracks[i].Race, tracks[i].TrackName,
                tracks[i].Date);
 
